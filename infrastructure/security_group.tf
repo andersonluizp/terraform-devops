@@ -1,7 +1,7 @@
 # Security Group
 resource "aws_security_group" "sg-web" {
   name        = "${local.prefix}-sg-web"
-  description = "Security Group para acesso SSH e HTTP"
+  description = "Security Group para acesso SSH, EFS e HTTP"
   vpc_id      = aws_vpc.this.id
 
   ingress {
@@ -16,6 +16,14 @@ resource "aws_security_group" "sg-web" {
     description = "SSH"
     from_port   = 22
     to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "EFS Mount target"
+    from_port   = 2049
+    to_port     = 2049
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }

@@ -20,21 +20,31 @@ resource "aws_instance" "this" {
     }
   )
 
-  #  provisioner "remote-exec" {
-  #    inline = [
-  #      "sudo apt update",
-  #      "sudo apt install nginx -y",
-  #    ]
-  #
-  #    connection {
-  #      type        = "ssh"
-  #      user        = "ubuntu"
-  #      private_key = file("~/.ssh/id_rsa")
-  #      host        = self.public_ip
-  #    }
-  #
-  #  }
+  provisioner "file" {
+    source      = "../scripts/script.sh"
+    destination = "/home/ubuntu/script.sh"
 
-  user_data_base64 = "IyEvYmluL2Jhc2gKc3VkbyBhcHQgdXBkYXRlCnN1ZG8gYXB0IGluc3RhbGwgbmdpbnggLXk="
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = file("~/.ssh/id_rsa")
+      host        = self.public_ip
+    }
+
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo chmod +x /home/ubuntu/script.sh",
+      "sudo sh /home/ubuntu/script.sh"
+    ]
+
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = file("~/.ssh/id_rsa")
+      host        = self.public_ip
+    }
+  }
 
 }
